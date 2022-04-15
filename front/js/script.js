@@ -4,13 +4,7 @@ fetch(url)
   .then((kanaps) => addProducts(kanaps));
 
 function addProducts(kanaps) {
-  /* for (let i = 0; i < data.length; i++) {
-    console.log("kanap numéro", i, data[i]);
-  } */
-
   kanaps.forEach((kanap) => {
-    console.log("kanapé numéro", kanap);
-
     let { _id, imageUrl, altTxt, name, description } = kanap;
 
     let image = makeImage(imageUrl, altTxt);
