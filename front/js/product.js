@@ -1,42 +1,78 @@
-/* let queryString = window.location.search;
-let urlParams = new URLSearchParams(queryString);
-let id = urlParams.get("id");
-console.log(id);
+let queryString = window.location.search;
+let searchParams = new URLSearchParams(queryString);
+let id = searchParams.get("id");
 
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
-  .then((res) => console.log(res)); */
+  .then((res) => manageData(res));
 
-/* Version 2
+function manageData(kanap) {
+  let { imageUrl, altTxt, name, description, colors, price } = kanap;
+  itemPrice = price;
+  lsImageURL = imageUrl;
+  lsAltTxt = altTxt;
+  ItemName = name;
+  makeImage(imageUrl, altTxt);
+  makeTitle(name);
+  makePrice(price);
+  makeDescription(description);
+  makeColors(colors);
+}
 
-let queryString = window.location.href;
-let urlParams = new URLSearchParams(queryString);
-let id = urlParams.get("id");
-console.log(id);
+function makeImage(imageUrl, altTxt) {
+  let image = document.createElement("img");
+  image.src = imageUrl;
+  image.alt = altTxt;
+  let parent = document.querySelector(".item__img");
+  parent.appendChild(image);
+}
 
-fetch(queryString)
-  .then((response) => response.json())
-  .then((res) => console.log(res)); */
+function makeTitle(name) {
+  let title = document.getElementById("title");
+  title.textContent = name;
+}
 
-/*  Version 3 /* 
+function makePrice(price) {
+  let spanPrice = document.getElementById("price");
+  spanPrice.textContent = price;
+}
 
-/* let currentUrl = window.location.href;
-let url = new URL(currentUrl);
-let id = url.searchParams.get("id");
-console.log(id);
+function makeDescription(description) {
+  let textDescription = document.getElementById("description");
+  textDescription.textContent = description;
+}
 
-fetch(currentUrl)
-  .then((response) => response.json())
-  .then((res) => console.log(res));
-/* 
-/* 
-let params = new URLSearchParams(document.location.search);
-let id = params.get("_id");
-console.log(id);
+function makeColors(colors) {
+  let selectColors = document.getElementById("colors");
+  colors.forEach((color) => {
+    let option = document.createElement("option");
+    option.value = color;
+    option.textContent = color;
+    selectColors.appendChild(option);
+  });
+}
 
-fetch("http://localhost:3000/api/products")
-  .then((res) => res.json())
-  .then((dataProduit) => console.log(dataProduit)); */
+let button = document.getElementById("addToCart");
+button.addEventListener("click", (addProducts) => {
+  let color = document.getElementById("colors").value;
+  let quantity = document.getElementById("quantity").value;
+  if (color == null || color === "" || quantity == 0 || quantity == null) {
+    alert("Veuillez sélectionner une couleur et une quantité");
+    return; /* Pour qu'une fonction s'arrête */
+  }
+  let dataCart = {
+    id: id,
+    color: color,
+    price: itemPrice,
+    quantity: /* Number(quantity) */ quantity,
+    imageUrl: lsImageURL,
+    altTxt: lsAltTxt,
+    name: ItemName,
+  };
+  /* Vérifier si le produit n'est pas déjà présent dans le panier */
+  localStorage.setItem(id, JSON.stringify(dataCart));
+  window.location.href = "cart.html";
+});
 
-/*  J'ai essayé aussi de remplacer l'intérieur des () par ("http://localhost:3000/api/products") + id) ou + querySelector = window.location.search pour avoir justement l'ID mais cela ne marche pas, j'ai toujours un console.log qui me dit que l'ID est null qu'il n'existe pas. Lorsque je vais voir dans les params dans l'onglet network j'ai l'ID dans le payload mais j'ai juste le numéro par la clé qui indique que c'est un ID.
- */
+itemPrice = 0;
+let lsImageURL, lsAltTxt, ItemName;

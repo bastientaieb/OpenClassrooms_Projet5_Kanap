@@ -26,7 +26,7 @@ function appendElement(article, image, h3, p) {
 
 function makeAnchor(_id) {
   let anchor = document.createElement("a");
-  anchor.href = "./product.html?" + _id;
+  anchor.href = "./product.html?id=" + _id;
   return anchor;
 }
 
