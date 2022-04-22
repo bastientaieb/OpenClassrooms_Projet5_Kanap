@@ -21,20 +21,32 @@ function displayItem(item) {
   let divDescription = makeCartContent(item);
   article.appendChild(divDescription);
   displayArticle(article);
-  displayTotalQuantity(item);
-  displayTotalPrice(item);
+  displayTotalQuantity();
+  displayTotalPrice();
 }
 // Fonction "racine" qui indique quelles sont les fonctions principales à appliquer pour le display item + appendChild des enfants directs
 
-function displayTotalPrice(item) {
-  let totalPrice = document.getElementById("totalPrice");
-  totalPrice.textContent = item.price;
-}
-
-function displayTotalQuantity(item) {
+function displayTotalQuantity() {
+  let total = 0;
   let totalQuantity = document.getElementById("totalQuantity");
-  totalQuantity.textContent = item.quantity;
+  cart.forEach((item) => {
+    let numberOfItemsInCart = item.quantity;
+    total = total + numberOfItemsInCart;
+  });
+  totalQuantity.textContent = total;
 }
+// fonction qui calcule le nombre total de produits dans le panier
+
+function displayTotalPrice() {
+  let total = 0;
+  let totalCartPrice = document.getElementById("totalPrice");
+  cart.forEach((item) => {
+    let totalPrice = item.price * item.quantity;
+    total = total + totalPrice;
+  });
+  totalCartPrice.textContent = total;
+}
+// fonction qui calcule le prix total du panier
 
 function makeCartContent(item) {
   let divCartContent = document.createElement("div");
@@ -60,9 +72,10 @@ function makeSettings(item) {
   return settings;
 }
 
-function DeleteSetting(settings) {
+function DeleteSetting(settings, item) {
   let div = document.createElement("div");
   div.classList.add("cart__item__content__settings__delete");
+  div.addEventListener("click", () => deleteItem(item));
 
   let p = document.createElement("p");
   p.classList.add("deleteItem");
@@ -70,6 +83,28 @@ function DeleteSetting(settings) {
 
   div.appendChild(p);
   settings.appendChild(div);
+}
+function deleteItem(item) {
+  let itemToDelete = cart.findIndex(
+    (product) => product.id === item.id && product.color === item.color
+  );
+  cart.splice(itemToDelete, 1);
+  displayTotalPrice();
+  displayTotalQuantity();
+  deleteDataFromCache(item);
+  deleteImageFromPage(item);
+}
+
+function deleteImageFromPage(item) {
+  let itemToDelete = document.querySelector(
+    `article[data-id="${item.id}"][data-color="${item.color}"]`
+  );
+  itemToDelete.remove();
+}
+
+function deleteDataFromCache(item) {
+  let key = `${item.id}-${item.color}`;
+  localStorage.removeItem(key);
 }
 
 function makeSettingsQuantity(settings, item) {
@@ -87,8 +122,24 @@ function makeSettingsQuantity(settings, item) {
   input.min = "1";
   input.max = "100";
   input.value = item.quantity;
+  input.addEventListener("input", () => updateCart(item.id, input.value, item));
+
   settingsQuantity.appendChild(input);
   settings.appendChild(settingsQuantity);
+}
+
+function updateCart(id, newValue, item) {
+  let updatedItem = cart.find((item) => item.id === id);
+  updatedItem.quantity = Number(newValue);
+  displayTotalQuantity();
+  displayTotalPrice();
+  saveNewCart(item);
+}
+
+function saveNewCart(item) {
+  let data = JSON.stringify(item);
+  let keyIdColor = `${item.id}-${item.ccolor}`;
+  localStorage.setItem(keyIdColor, data);
 }
 
 function makeDescription(item) {

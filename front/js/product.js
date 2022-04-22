@@ -60,17 +60,18 @@ button.addEventListener("click", (addProducts) => {
     alert("Veuillez sélectionner une couleur et une quantité");
     return; /* Pour qu'une fonction s'arrête */
   }
+  let keyIdColor = `${id}-${color}`;
   let dataCart = {
     id: id,
     color: color,
     price: itemPrice,
-    quantity: /* Number(quantity) */ quantity,
+    quantity: Number(quantity),
     imageUrl: lsImageURL,
     altTxt: lsAltTxt,
     name: ItemName,
   };
   /* Vérifier si le produit n'est pas déjà présent dans le panier */
-  localStorage.setItem(id, JSON.stringify(dataCart));
+  localStorage.setItem(keyIdColor, JSON.stringify(dataCart));
   window.location.href = "cart.html";
 });
 
