@@ -1,7 +1,11 @@
 let cart = [];
+
 getCartItems();
 cart.forEach((item) => displayItem(item));
 // Fonction boucle à appliquer pour chaque item
+
+let orderButton = document.getElementById("order");
+orderButton.addEventListener("click", (event) => submitForm(event));
 
 function getCartItems() {
   let numberOfItems = localStorage.length;
@@ -187,3 +191,85 @@ function makeImage(item) {
   return div;
 }
 // Création de l'image des produits dans le paniers avec le rattachement à sa div
+
+function submitForm(event) {
+  event.preventDefault();
+  if (cart.length === 0) {
+    alert("Veuillez choisir un canapé");
+    return;
+  }
+
+  if (validationOfForm()) return;
+  // arrêt de la fonction de validation, si le formulaire est vide
+
+  if (emailValidation()) return;
+
+  let requestToApi = makeRequestToApi();
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(requestToApi),
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      let orderId = data.orderId;
+      window.location.href = "/front/html/confirmation.html?orderId=" + orderId;
+    })
+    .catch((err) => console.error(err));
+}
+
+function emailValidation() {
+  let emailInput = document.getElementById("email").value;
+  let regex = /^[A-Za-z0-9+_.-]+@(.+)$/;
+  if (regex.test(emailInput) === false) {
+    alert("Veuillez entrez un email valide");
+    return true;
+  }
+  return false;
+}
+
+function validationOfForm() {
+  let form = document.querySelector(".cart__order__form");
+  let inputs = form.querySelectorAll("input");
+  inputs.forEach((input) => {
+    if (input.value === "") {
+      alert("Veuillez remplir tous les champs du formulaire");
+      return true;
+    }
+    return false;
+  });
+}
+
+function makeRequestToApi() {
+  let form = document.querySelector(".cart__order__form");
+  let firstName = form.elements.firstName.value;
+  let lastName = form.elements.lastName.value;
+  let address = form.elements.address.value;
+  let city = form.elements.city.value;
+  let email = form.elements.email.value;
+  let arrayApi = {
+    contact: {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    },
+    products: getIdFromLocalStorage(),
+  };
+
+  return arrayApi;
+}
+
+function getIdFromLocalStorage() {
+  let itemsBought = localStorage.length;
+  let idOfItems = [];
+  for (let i = 0; i < itemsBought; i++) {
+    let key = localStorage.key(i);
+    let id = key.split("-")[0];
+    idOfItems.push(id);
+  }
+  return idOfItems;
+}

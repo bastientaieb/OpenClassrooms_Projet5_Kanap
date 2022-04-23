@@ -1,7 +1,8 @@
 const url = "http://localhost:3000/api/products";
 fetch(url)
   .then((response) => response.json())
-  .then((kanaps) => addProducts(kanaps));
+  .then((kanaps) => addProducts(kanaps))
+  .catch((err) => console.error(err));
 
 function addProducts(kanaps) {
   kanaps.forEach((kanap) => {

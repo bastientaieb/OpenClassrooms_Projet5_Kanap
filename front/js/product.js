@@ -4,7 +4,8 @@ let id = searchParams.get("id");
 
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
-  .then((res) => manageData(res));
+  .then((res) => manageData(res))
+  .catch((err) => console.error(err));
 
 function manageData(kanap) {
   let { imageUrl, altTxt, name, description, colors, price } = kanap;
