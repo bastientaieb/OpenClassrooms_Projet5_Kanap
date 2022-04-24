@@ -1,11 +1,5 @@
 let cart = [];
-
 getCartItems();
-cart.forEach((item) => displayItem(item));
-// Fonction boucle à appliquer pour chaque item
-
-let orderButton = document.getElementById("order");
-orderButton.addEventListener("click", (event) => submitForm(event));
 
 function getCartItems() {
   let numberOfItems = localStorage.length;
@@ -15,7 +9,10 @@ function getCartItems() {
     cart.push(item);
   }
 }
-// Récupération des données du local storage + conversion en objet et push dans l'array cart
+// Récupération des données mises dans le local storage + conversion en objet (Javascript) et push dans l'array cart défini plus haut.
+
+cart.forEach((item) => displayItem(item));
+// Boucle qui applique pour chaque item la fonction displayItem.
 
 function displayItem(item) {
   let article = makeArticle(item);
@@ -28,7 +25,7 @@ function displayItem(item) {
   displayTotalQuantity();
   displayTotalPrice();
 }
-// Fonction "racine" qui indique quelles sont les fonctions principales à appliquer pour le display item + appendChild des enfants directs
+// Fonction "racine" qui appelle les fonctions principales pour le display item et lie les principaux éléments à leurs parents.
 
 function displayTotalQuantity() {
   let total = 0;
@@ -50,7 +47,7 @@ function displayTotalPrice() {
   });
   totalCartPrice.textContent = total;
 }
-// fonction qui calcule le prix total du panier
+// fonction qui calcule le prix total du panier.
 
 function makeCartContent(item) {
   let divCartContent = document.createElement("div");
@@ -64,7 +61,7 @@ function makeCartContent(item) {
 
   return divCartContent;
 }
-// Création du premier petit enfant avec ses fonctions et ses enfants
+// Création du premier petit enfant avec ses "fonctions enfants" et ses éléments enfants.
 
 function makeSettings(item) {
   let settings = document.createElement("div");
@@ -75,6 +72,7 @@ function makeSettings(item) {
 
   return settings;
 }
+// Création de la div des paramètres et de ses fonctions enfants pour gérer la quantité et la suppression des éléments dans le panier.
 
 function DeleteSetting(settings, item) {
   let div = document.createElement("div");
@@ -88,6 +86,8 @@ function DeleteSetting(settings, item) {
   div.appendChild(p);
   settings.appendChild(div);
 }
+//Fonction qui donne une classe à la div de la suppression à laquelle on ajoute un eventListener pour supprimer les éléments du panier grâce à sa fonction.
+
 function deleteItem(item) {
   let itemToDelete = cart.findIndex(
     (product) => product.id === item.id && product.color === item.color
@@ -98,6 +98,9 @@ function deleteItem(item) {
   deleteDataFromCache(item);
   deleteImageFromPage(item);
 }
+// itemToDelete permet de trouver le premier index dont le product Id est strictement égal à l'id de l'item et dont la couleur du produit est strictement égal à la couleur de l'item.
+// On applique ensuite la méthode splice à cet item et on supprime les données des index 0 à 1 (la totalité);
+// On appelle ensuite les fonctions totalPrice et totalQuantity pour réactualiser le montant total du panier et appelle les dernières fonctions de suppression.
 
 function deleteImageFromPage(item) {
   let itemToDelete = document.querySelector(
@@ -105,11 +108,13 @@ function deleteImageFromPage(item) {
   );
   itemToDelete.remove();
 }
+// Supprime l'article dont les attributs sont égaux à l'id et à la couleur de l'item concerné par la suppression.
 
 function deleteDataFromCache(item) {
   let key = `${item.id}-${item.color}`;
   localStorage.removeItem(key);
 }
+// Fonction qui supprime du localStorage l'id précis (id + couleur) de l'item qui a été enlevé du panier.
 
 function makeSettingsQuantity(settings, item) {
   let settingsQuantity = document.createElement("div");
@@ -131,6 +136,9 @@ function makeSettingsQuantity(settings, item) {
   settingsQuantity.appendChild(input);
   settings.appendChild(settingsQuantity);
 }
+// Création des éléments de la div settings avec son contenu en les rattachant à son parent.
+// Défini les paramètres des inputs du panier avec son contenu.
+// Défini l'eventListener updateCart à chaque fois que l'input est modifié pour appeler la fonction qui actualise la valeur du panier.
 
 function updateCart(id, newValue, item) {
   let updatedItem = cart.find((item) => item.id === id);
@@ -139,12 +147,15 @@ function updateCart(id, newValue, item) {
   displayTotalPrice();
   saveNewCart(item);
 }
+// updateItem défini l'item modifié avec son id strictement identique à l'id de l'item modifié.
+// On indique sa nouvelle quantité en tant que valeur puis on appelle les fonctions qui calculent le montant total du panier. On envoi les données finales dans le localStorage.
 
 function saveNewCart(item) {
   let data = JSON.stringify(item);
   let keyIdColor = `${item.id}-${item.ccolor}`;
   localStorage.setItem(keyIdColor, data);
 }
+// On envoi les Id précis des canapés commandés dans le localStorage pour les récupérer pour la confirmation de commande.
 
 function makeDescription(item) {
   let divDescription = document.createElement("div");
@@ -165,7 +176,7 @@ function makeDescription(item) {
 
   return divDescription;
 }
-// Fonction qui gère la création des descriptions des produits affichés dans le panier
+// Fonction qui gère la création des descriptions des produits affichés dans le panier.
 
 function makeArticle(item) {
   let article = document.createElement("article");
@@ -174,12 +185,12 @@ function makeArticle(item) {
   article.dataset.color = item.color;
   return article;
 }
-// fonction de création de l'article principal avec ses données et son contenu
+// fonction de création de l'article principal avec ses données et son contenu.
 
 function displayArticle(article) {
   document.getElementById("cart__items").appendChild(article);
 }
-// Article rattaché à la section principal du panier
+// Article rattaché à la section principal du panier.
 
 function makeImage(item) {
   let div = document.createElement("div");
@@ -192,6 +203,10 @@ function makeImage(item) {
 }
 // Création de l'image des produits dans le paniers avec le rattachement à sa div
 
+let orderButton = document.getElementById("order");
+orderButton.addEventListener("click", (event) => submitForm(event));
+// Permet d'appliquer la fonction submitForm à chaque clique sur le bouton commander. Passe le paramètre de l'évènement pour empêcher l'actualisation automatique.
+
 function submitForm(event) {
   event.preventDefault();
   if (cart.length === 0) {
@@ -200,9 +215,10 @@ function submitForm(event) {
   }
 
   if (validationOfForm()) return;
-  // arrêt de la fonction de validation, si le formulaire est vide
+  // arrêt de la fonction de validation, si le formulaire est vide avec message d'erreur.
 
   if (emailValidation()) return;
+  // arrêt du formulaire avec message d'erreur si le format de l'émail est invalide.
 
   let requestToApi = makeRequestToApi();
   fetch("http://localhost:3000/api/products/order", {
@@ -219,6 +235,8 @@ function submitForm(event) {
     })
     .catch((err) => console.error(err));
 }
+// Envoi des données de la commande au serveur avec méthode Post.
+// Définition de l'id de la commande et renvoi vers le lien html de la commande avec le bon numéro.
 
 function emailValidation() {
   let emailInput = document.getElementById("email").value;
@@ -229,6 +247,7 @@ function emailValidation() {
   }
   return false;
 }
+// Vérification du format de l'émail renseigné par l'utilisateur.
 
 function validationOfForm() {
   let form = document.querySelector(".cart__order__form");
@@ -241,6 +260,7 @@ function validationOfForm() {
     return false;
   });
 }
+// Vérification que l'on n'envoie pas au serveur un forumlaire vide.
 
 function makeRequestToApi() {
   let form = document.querySelector(".cart__order__form");
@@ -262,6 +282,8 @@ function makeRequestToApi() {
 
   return arrayApi;
 }
+// Envoi des données au serveur avec le contenu du formulaire rempli par le client.
+// Définition de la variable products qui contient les Id des produits achetés.
 
 function getIdFromLocalStorage() {
   let itemsBought = localStorage.length;
@@ -273,3 +295,5 @@ function getIdFromLocalStorage() {
   }
   return idOfItems;
 }
+// Défini le nombre de canapés achetés et push l'id de chaque article dans l'array idOfItems qui sera ensuite affiché.
+// split est utilisé pour séparer l'id et la couleur de l'id précis que l'on a créé précédemment.
