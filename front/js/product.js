@@ -96,8 +96,36 @@ function addProducts() {
   };
   // Défini les données des items présents dans le panier sous forme d'array
 
-  localStorage.setItem(keyIdColor, JSON.stringify(dataCart));
-  // Envoi l'ID précis et l'array des données des items sous format JSON dans le LocalStorage.
+  let numberOfItems = localStorage.length;
+  if (numberOfItems > 0) {
+    for (let i = 0; i < numberOfItems; i++) {
+      let keyItems = localStorage.getItem(localStorage.key(i));
+      let item = JSON.parse(keyItems);
+      if (item.id == id && item.color == color) {
+        let quantity = item.quantity;
+        quantity = quantity + 1;
+        let dataCartUpdate = {
+          id: id,
+          color: color,
+          price: itemPrice,
+          quantity: Number(quantity),
+          imageUrl: lsImageURL,
+          altTxt: lsAltTxt,
+          name: ItemName,
+        };
+        localStorage.setItem(keyIdColor, JSON.stringify(dataCartUpdate));
+        // ajout d'un article de même couleur et de même référence, quantité => + 1
+      } else {
+        localStorage.setItem(keyIdColor, JSON.stringify(dataCart));
+        // Article de même référence mais de couleur différente.
+      }
+    }
+  } else {
+    localStorage.setItem(keyIdColor, JSON.stringify(dataCart));
+    // Ajout simple d'un article dans le panier.
+    // Envoi l'ID précis et l'array des données des items sous format JSON dans le LocalStorage.
+  }
   window.location.href = "cart.html";
   // Envoi vers la page du panier.
 }
+// Fonction qui définit si un article identique est déjà dans le panier. Si oui seul la quantité est changé. Sinon il est ajouté normalement.

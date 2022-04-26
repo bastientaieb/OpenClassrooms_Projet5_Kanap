@@ -1,7 +1,7 @@
 let cart = [];
 getCartItems();
 
-function getCartItems() {
+function getCartItems(item) {
   let numberOfItems = localStorage.length;
   for (let i = 0; i < numberOfItems; i++) {
     let keyItems = localStorage.getItem(localStorage.key(i));
@@ -21,11 +21,14 @@ function displayItem(item) {
 
   let divDescription = makeCartContent(item);
   article.appendChild(divDescription);
+
   displayArticle(article);
   displayTotalQuantity();
   displayTotalPrice();
 }
 // Fonction "racine" qui appelle les fonctions principales pour le display item et lie les principaux éléments à leurs parents.
+
+// Fonction qui permet de regrouper les canapés de même couleur lors de l'ajout au panier
 
 function displayTotalQuantity() {
   let total = 0;
@@ -152,7 +155,7 @@ function updateCart(id, newValue, item) {
 
 function saveNewCart(item) {
   let data = JSON.stringify(item);
-  let keyIdColor = `${item.id}-${item.ccolor}`;
+  let keyIdColor = `${item.id}-${item.color}`;
   localStorage.setItem(keyIdColor, data);
 }
 // On envoi les Id précis des canapés commandés dans le localStorage pour les récupérer pour la confirmation de commande.
