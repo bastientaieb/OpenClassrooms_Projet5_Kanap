@@ -243,7 +243,8 @@ function submitForm(event) {
 
 function emailValidation() {
   let emailInput = document.getElementById("email").value;
-  let regex = /^[A-Za-z0-9+_.-]+@(.+)$/;
+  let regex =
+    /^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i;
   if (regex.test(emailInput) === false) {
     alert("Veuillez entrez un email valide");
     return true;
